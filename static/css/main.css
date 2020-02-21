@@ -1,0 +1,33 @@
+body{
+    padding: 0;
+    margin: 0;
+    background-color: rgba(0, 0, 255, 0.11);
+}
+#section-index{
+    background-image: url("/static/images/img2.jpg");
+    height: 40vh;
+    text-align: center;
+    color: white;
+    padding-top: 10rem;
+}
+#section_auth fieldset{
+    margin-top: 100px;
+    background-color: white;
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px;
+
+}
+#footer-section{
+    padding-top:5rem ;
+    padding-bottom:5rem ;
+    background-color: rgba(0, 0, 255, 0.37);
+    text-align: center;
+}
+#footer-section .fa {
+    padding: 10px;
+    margin-right: 15px;
+    color: rgba(0, 0, 255, 0.51);
+
+
+}
