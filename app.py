@@ -50,10 +50,12 @@ class User(UserMixin,db.Model):
     def __repr__(self):
         return self.username
 
-    def set_password(self,password):
-        self.password = generate_password_hash(password)
 
-    def check_password(self,password):
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
         return check_password_hash(self.password, password)
 
 
@@ -93,32 +95,36 @@ def signup():
         if user is not None:
             flash("User exists, login ")
             return redirect(url_for('login'))
-
-        user = User(username=username,email=email)
+        password_hash = generate_password_hash(password)
+        user = User(username=username,email=email, password=password_hash)
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
-        print(user.password)
+
         flash("signup successful")
         # if signup is successful, the message above will be flashed on the login page
         return render_template('login.html')
     return render_template('signup.html', title="Signup page")
 
 # localhost:3000/login
-@app.route('/login', methods=['GET','POST'])
-def login():
-    if request.method == 'POST':
-        # after recieving check if user exist with the given email
-        user = User.query.filter_by(email=request.form['email']).first()
-        # if user is not found or the password did not match return user to login page
-        if user is None or user.check_password(request.form['password']):
-            # redirect user to login page again
-            flash("Login not successful")
-            return redirect(url_for('login'))
 
-        login_user(user)
-        return redirect(url_for('index'))
-    return render_template('login.html', title="Login page")
+@app.route('/login', methods=['POST','GET'])
+def login():
+    # collect form data
+    if request.method == 'POST':
+        # check if empty
+        if request.form['email'] == None or request.form['password'] == None:
+            return redirect(url_for('login'))
+        else:
+            user = User.query.filter_by(email= request.form['email']).first()
+            # check if password match
+            if user is None or not user.check_password(request.form['password']):
+                flash('Invalid username or password', 'alert alert-danger')
+                return redirect(url_for('login'))
+            login_user(user)
+            flash('Login successful', 'alert alert-success')
+            return redirect(url_for('index'))
+    return render_template('login.html', title="Antony Injila | Login")
 
 
 # localhost:3000/logout
