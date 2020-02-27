@@ -63,8 +63,10 @@ class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100))
     body = db.Column(db.String(100))
+    blog_image = db.Column(db.String(100))
     created_at = db.Column(db.DateTime, index=True,default=datetime.utcnow)
     user_id = db.Column(db.Integer,db.ForeignKey('user.id'))
+    blogger = db.Column(db.String(100))
 
 # Flask-Login keeps track of the logged in user by storing its unique identifier in Flask's user session, a storage space '
 # 'assigned to each user who connects to the application. Each time the logged-in user navigates to a new page, Flask-Login'
@@ -77,7 +79,8 @@ def load_user(id):
 # localhost:3000/
 @app.route('/')
 def index():
-    return render_template('index.html')
+    blogs = Blog.query.all()
+    return render_template('index.html', title="BLogPoint | Home", blogs=blogs)
 
 # #############Authentication ######################
 
@@ -133,12 +136,13 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-@app.route('/profile/<int:user_id>')
+@app.route('/profile/<int:user_id>',methods=['GET','POST'])
 def profile(user_id):
     user = User.query.get(user_id)
+    blogs = user.blogs
+   
     if request.form == 'POST' or request.files:
         username = request.form['username']
-        email = request.form['email']
         bio = request.form['bio']
         image_old = request.form['old_image']
         # process image upload
@@ -146,11 +150,11 @@ def profile(user_id):
         file_new = request.files['new_image']
         # if user is update data together with image
         if file_new:
-            filename = file_new.secure_filename(file_new.filename)
+            filename = secure_filename(file_new.filename)
             # save image in the images folder
-            profile_image = "static/images/profile_pics/{}".format(filename)
+            profile_image = "static/images/{}".format(filename)
+            file_new.save(BASE_DIR + "static/images/" + filename)
             user.username = username
-            user.email = email
             user.bio = bio
             user.profile_pic = profile_image
             db.session.commit()
@@ -158,7 +162,6 @@ def profile(user_id):
         # if user is update data without image
         profile_image = image_old
         user.username = username
-        user.email = email
         user.bio = bio
         user.profile_pic = profile_image
         db.session.commit()
@@ -171,18 +174,40 @@ def profile(user_id):
 
 
 @app.route('/account/<int:user_id>')
-def account(user_id):
-    return render_template('account.html')
+def blogger(user_id):
+    user = User.query.get(user_id)
+
+    return render_template('account.html', user=user)
 
 ################post routes#################
 @app.route('/posts/add', methods=['GET','POST'])
 def posts_add():
+    
     if request.method == 'POST':
+        bloggerID= request.form['userID']
         title= request.form['title']
         body= request.form['description']
+        
+        # get user object
+        user =User.query.get(bloggerID)
+        # if images was uploaded
+        file_new = request.files['blog_image']
+        if file_new:
+            filename = secure_filename(file_new.filename)
+            # save image in the images folder
+            blog_image = "static/images/blogs/{}".format(filename)
+            file_new.save(BASE_DIR + "static/images/blogs/" + filename)
 
-        print(title, body)
-
+            new_blog = Blog(title=title,body=body,blog_image= blog_image, blogger=user.username)
+            db.session.add(new_blog)
+            db.session.commit()
+            return redirect(url_for("index"))
+        # if user does not add an image, assign a default image
+        blog_image = "static/images/blogs/defaultimg.jpg"  
+        new_blog = Blog(title=title,body=body,blog_image= blog_image)
+        db.session.add(new_blog)   
+        db.session.commit()
+        return redirect(url_for("index"))
     return render_template('posts.html')
 
 @app.route('/posts/detail/<int:post_id>')

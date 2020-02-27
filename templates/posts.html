@@ -6,8 +6,11 @@
         <div class="row">
             <div class="col-md-3 col-lg-3 col-xl-3"></div>
             <div class="col-md-6 col-lg-6 col-xl-6">
-                <form action="/posts/add" method="post">
+                <form action="{{url_for('posts_add')}}" method="post" enctype="multipart/form-data">
                     <fieldset>
+                        {% if current_user.is_authenticated %}
+                        <input type="number" name="userID" hidden value="{{ current_user.get_id() }}">
+                        {% endif %}
                          <div class="form-group">
                              <label for="">Title</label>
                              <input type="text" name="title" class="form-control">
@@ -15,8 +18,9 @@
 
                          <div class="form-group">
                              <label for="">Body</label>
-                             <textarea name="description" id="" cols="30" rows="10"></textarea>
+                             <textarea name="description" id="" cols="30" rows="10" class="form-control"></textarea>
                          </div>
+                         <input type="file" name="blog_image">
                         <button class="btn btn-info btn-block">Post a Blog</button>
                     </fieldset>
 

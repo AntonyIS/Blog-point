@@ -1,2 +1,4 @@
 .idea
 blogpointdb.sqlite
+venv
+.vscode

@@ -5,7 +5,8 @@
     <div class="row">
         <div class="col-md-4 col-lg-4 col-xl-4">
             <div class="card" id="profile_section">
-                <form action="" method="{{ url_for('profile', user_id=user.id) }}" enctype="multipart/form-data">
+                <img src="/{{ user.profile_pic }}" alt="">
+                <form  action="{{ url_for('profile', user_id=user.id) }}" method="post" enctype="multipart/form-data">
                    <fieldset>
                         <div class="form-group">
                             <label for="">Username</label>
@@ -16,7 +17,7 @@
                                {{ user.bio }}
                            </textarea>
                         </div>
-                       <input type="text" name="old_image" hidden>
+                       <input type="text" name="old_image" hidden value="{{user.profile_pic}}">
                        <input type="file" name="new_image" >
                        <button class="btn btn-info btn-block">Update</button>
                    </fieldset>
@@ -24,7 +25,7 @@
             </div>
         </div>
         <div class="col-md-8 col-lg-8 col-xl-8">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut dolore enim error ipsum iste itaque, labore minima nam, nobis optio quae qui quisquam recusandae repellat sequi sint sit tempore. Aspernatur!</p>
+                    
         </div>
     </div>
 </div>
