@@ -15,7 +15,6 @@
             <div class="col-md-6 col-lg-6 col-xl-6" style="margin-bottom: 1rem">
                 <div class="card">
                     <div class="row">
-                           
                         <div class="col-md-4 col-lg-4 col-xl-4">
                             <img src="{{blog.blog_image}}" alt="" class="card-img" style="height: 100px;width: 100px;padding-left: 20px;padding-top: 15px">
                         </div>
@@ -24,10 +23,9 @@
                                 <p class="card-text" style="padding: 5px">{{blog.body[:100]}}...
                                 </p>
                                 <p>Posted by 
-                                    <a href="" style="text-decoration:none">
+                                    <a href="{{url_for('blogger', username=blog.blogger)}}" style="text-decoration:none">
                                         <span style="font-weight: bold;">{{blog.blogger}}</span> 
                                     </a>
-                                    
                                     posted at {{blog.created_at.strftime("%a")}}
                                 {{blog.created_at.strftime("%b")}}
                                 {{blog.created_at.strftime("%Y")}}

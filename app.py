@@ -170,14 +170,10 @@ def profile(user_id):
     return render_template('account.html', user=user)
 
 
-
-
-
-@app.route('/account/<int:user_id>')
-def blogger(user_id):
-    user = User.query.get(user_id)
-
-    return render_template('account.html', user=user)
+@app.route('/blogger/<username>')
+def blogger(username):
+    user = User.query.filter_by(username=username).first()
+    return render_template('blogger.html', user=user)
 
 ################post routes#################
 @app.route('/posts/add', methods=['GET','POST'])
